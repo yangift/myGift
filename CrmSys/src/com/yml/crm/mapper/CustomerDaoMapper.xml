@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yml.crm.dao.CustomerDao">
+	<resultMap type="Customer" id="customerMap">
+		<id property="cusId" column="cus_id" />
+		<result property="cusName"  column="cus_name" />
+		<result property="cusNumber"  column="cus_number" />
+		<result property="cusAddress" column="cus_address" />
+		<result property="cusChangeOrigin" column="cus_change_origin" />
+		<result property="cusChangeDescribe" column="cus_change_describe" />
+		<result property="cusSuccessProbability" column="cus_success_probability" />
+		<result property="cusManager" column="cus_manager" />
+		<result property="cusAllotDate" column="cus_allot_date" />
+		<result property="cusPostalCode" column="cus_postal_code" />
+		<result property="cusTelephone" column="cus_telephone" />
+		<result property="cusFasimile" column="cus_fasimile" />
+		<result property="cusUrl" column="cus_url" />
+		<result property="cusRegisterNumber" column="cus_register_number" />
+		<result property="cusLegalPerson" column="cus_legal_person" />
+		<result property="cusRegisterMoney" column="cus_register_money" />
+		<result property="cusRmb" column="cus_rmb" />
+		<result property="cusOpeningBank" column="cus_opening_bank" />
+		<result property="cusBankAccount" column="cus_bank_account" />
+		<result property="cusCrownRent" column="cus_crown_rent" />
+		<result property="cusStateTaxes" column="cus_state_taxes" />
+		<result property="cusResume" column="cus_resume" />
+		<result property="cusCreditworthiness" column="cus_creditworthiness" />
+		<result property="cusStatisfcing" column="cus_statisfcing" />
+		<result property="cusState" column="cus_state" />
+		<association property="customerRank" javaType="CustomerRank">
+			<id property="ckId" column="ck_id" />
+			<result property="ckName" column="ckName" />
+		</association>
+		<association property="area" javaType="Area">
+			<id property="areId" column="are_id" />
+			<result property="areName" column="are_name" />
+		</association>
+		<collection property="serves" javaType="Serve">
+			<id property="serId" column="ser_id" />
+			<result property="serCreater" column="ser_creater" />
+			<result property="serCreaterDate" column="ser_creater_date"/>
+			<result property="serServiceRequest" column="ser_Service_Request"/>
+			<result property="serAllotName" column="ser_Allot_Name"/>
+			<result property="serAllotDate" column="ser_Allot_Date"/>
+			<result property="serHandle" column="ser_Handle"/>
+			<result property="serHandler" column="ser_Handler"/>
+			<result property="serResult" column="ser_Result"/>
+			<result property="serSatisfcing" column="ser_Satisfcing"/>
+			<result property="serResume" column="ser_Resume"/>
+			<result property="serState" column="ser_State"/>
+		</collection>
+		<collection property="linkmans" javaType="Linkman">
+		<id property="linId" column="lin_id" />
+		<result property="linName" column="lin_name"/>
+		<result property="linSex" column="linSex"/>
+		<result property="linTelephone" column="linTelephone"/>
+		<result property="linPost" column="linPost"/>
+		<result property="linMobile" column="linMobile"/>
+		<result property="linMemo" column="linMemo"/>
+		</collection>
+		<collection property="assorts" javaType="Assort">
+		<id  property="assId" column="ass_id"/>
+		<result property="assDate" column="ass_Date"/>
+		<result property="assPalce" column="ass_Palce"/>
+		<result property="assResume" column="ass_Resume"/>
+		<result property="assDetail" column="ass_Detail"/>
+		<result property="assMemo" column="ass_Memo"/>
+		</collection>
+		<collection property="orderses" javaType="Orders">
+			<id property="ordId" column="ord_id" />
+			<result property="ordAddress" column="ord_address" />
+			<result property="ordDate" column="ord_date" />
+			<result property="ordState" column="ord_state" />
+			<collection property="ordersDetails" javaType="OrdersDetail">
+				<id property="olId" column="ol_id" />
+				<result property="olCount" column="ol_Count" />
+				<result property="olUnit" column="ol_unit" />
+				<result property="olPrice" column="ol_Price" />
+				<association property="wares" javaType="Wares">
+					<id property="warId" column="war_id" />
+					<result property="warBatch" column="war_batch" />
+					<result property="warMemo" column="war_memo" />
+					<result property="warName" column="war_name" />
+					<result property="warPrice" column="war_price" />
+					<result property="warType" column="war_type" />
+					<result property="warUnit" column="war_unit" />
+				</association>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		CUS_ID, CUS_ARE_ID, CUS_CK_ID, CUS_NAME, CUS_NUMBER, CUS_ADDRESS,
+		CUS_CHANGE_ORIGIN,
+		CUS_CHANGE_DESCRIBE, CUS_SUCCESS_PROBABILITY, CUS_MANAGER, CUS_ALLOT_NAME, CUS_ALLOT_DATE,
+		CUS_POSTAL_CODE, CUS_TELEPHONE, CUS_FASIMILE, CUS_URL,
+		CUS_REGISTER_NUMBER, CUS_LEGAL_PERSON,
+		CUS_REGISTER_MONEY, CUS_RMB, CUS_OPENING_BANK, CUS_BANK_ACCOUNT, CUS_CROWN_RENT,
+		CUS_STATE_TAXES, CUS_RESUME, CUS_CREDITWORTHINESS, CUS_STATISFCING,
+		CUS_STATE
+	</sql>
+	<!-- 用id查找 -->
+	<select id="getCustomerById" parameterType="int" resultMap="customerMap">
+		select * from customer c LEFT JOIN linkman l on l.LIN_CUS_ID = c.CUS_ID  
+		LEFT JOIN assort a on a.ASS_CUS_ID =c.CUS_ID 
+		LEFT JOIN orders o on o.ORD_CUST_ID =c.CUS_ID 
+		LEFT JOIN orders_detail d on d.OL_ORD_ID = o.ORD_ID 
+		LEFT JOIN wares w on w.WAR_ID= d.OL_WAR_ID where c.CUS_ID=#{id};
+	</select>
+</mapper>
+
+
+
+
+

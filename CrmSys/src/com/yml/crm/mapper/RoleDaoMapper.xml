@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yml.crm.dao.RoleDao">
+	<resultMap type="Role" id="RoleMap">
+	<id property="rolId" column="rol_id"/>
+	<result property="rolName" column="rol_name"/>
+	</resultMap>
+	<select id="getRoleById" parameterType="int" resultMap="RoleMap">
+		select * from role r inner join consumer c on r.rol_id = c.con_rol_id
+		 where rol_id = #{id};
+	</select>
+</mapper>
